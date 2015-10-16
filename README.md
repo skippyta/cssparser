@@ -38,8 +38,13 @@ some malicious user uploading large files.
 Currently, this implementation should be safe from attacks which try to read private resources from disk,
 as well as attacks which try to write content to malicious paths (i.e. read /etc/passwd).
 
+We should add something like a rate limiter to prevent people from just spamming us with files and
+blowing out our infrastructure. Also, the files uploaded are not safe if they for some reason contain
+sensitive information in them, as access is completely unauthenticated.
+
 ##Some Design Decisions
 There are some pretty pervasive design decisions that I consciously made when constructing this.
+
 One of the more confusing ones is perhaps the convention of ascribing a unique Exception class to each
 exception throw site. I'm a big fan of this for the reason that it can often make logging and reporting
 much simpler, and it becomes easy to detect problem sites when a particular type of exception spikes. In
@@ -50,3 +55,20 @@ etc.
 I'm also generally very careful about array access here, favoring an isset() check of an array key
 before doing an explicit read when practical. This allows us to enable E_STRICT validation in our
 environment which generally encourages safer PHP practices.
+
+I didn't use namespaces here, nor did I really make much use of the directory structure for the source code,
+primarily due to the small nature of this project. That said, I tried to break up the problem into atomic
+parts and make small classes which handle very specific responsibilities. If this application were larger,
+the concept of a business logic execution block would be the "Flow" class I setup (ParseCSSFileFlow) and
+would probably have a richer abstraction around it to help define functional interfaces, exceptional
+behavior handling, etc.
+
+##Stuff I'd Like to Do
+I'd like to add more user input modes on the client side to make the report generation more effective.
+Currently, the application decides all of the dimensions on which to report, locking the user into a
+very one-dimensional experience. Since the application already has all of the tools it needs to expose
+all of the aspects of the CSS document to the user (save lexical understanding of selector syntax),
+we're just a few tweaks away from being able to expose some handles to that data to the user.
+
+Also, the experience for this would be a lot nicer if the request was processed via AJAX, but I didn't
+want to take the time to do that.
