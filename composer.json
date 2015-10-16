@@ -1,0 +1,6 @@
+{
+    "require": {
+        "aws/aws-sdk-php": "~2.6",
+        "smarty/smarty": "~3.1"
+    }
+}
